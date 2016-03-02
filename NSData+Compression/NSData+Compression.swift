@@ -10,7 +10,6 @@ import Foundation
 import Compression
 
 /** Available Compression Algorithms
-
 - Compression.LZ4   : Fast compression
 - Compression.ZLIB  : Balanced between speed and compression
 - Compression.LZMA  : High compression
@@ -48,7 +47,7 @@ extension NSData {
 	
 	
 	/// Returns a NSData object initialized by decompressing the data from the file specified by `path` using the given `compression` algorithm.
-	/// 
+	///
 	///     let data = NSData(contentsOfArchive: absolutePathToFile, usedCompression: Compression.LZFSE)
 	///
 	/// - Parameter path: The absolute path of the file from which to read data
@@ -77,9 +76,9 @@ extension NSData {
 			}
 		}
 		
-		// finally, attempt to uncompress the data and initalize self
-		if let uncompressedData = compressedData.uncompressedDataUsingCompression(compression) {
-			self.init(data: uncompressedData)
+		// finally, attempt to decompress the data and initalize self
+		if let decompressedData = compressedData.decompressedDataUsingCompression(compression) {
+			self.init(data: decompressedData)
 		}
 		else {
 			return nil
@@ -97,13 +96,13 @@ extension NSData {
 		return self.dataUsingCompression(compression, operation: .Encode)
 	}
 	
-	/// Returns a NSData object by uncompressing the receiver using the given compression algorithm.
+	/// Returns a NSData object by decompressing the receiver using the given compression algorithm.
 	///
-	///     let uncompressedData = someCompressedData.uncompressedDataUsingCompression(Compression.LZFSE)
+	///     let decompressedData = someCompressedData.decompressedDataUsingCompression(Compression.LZFSE)
 	///
 	/// - Parameter compression: Algorithm to use during decompression
 	/// - Returns: A NSData object created by decoding the receiver's contents using the provided compression algorithm. Returns nil if decompression fails or if the receiver's length is 0.
-	func uncompressedDataUsingCompression(compression: Compression) -> NSData? {
+	func decompressedDataUsingCompression(compression: Compression) -> NSData? {
 		return self.dataUsingCompression(compression, operation: .Decode)
 	}
 	
@@ -188,7 +187,7 @@ extension NSData {
 				if stream.dst_ptr > dstBufferPtr {
 					outputData.appendBytes(dstBufferPtr, length: stream.dst_ptr - dstBufferPtr)
 				}
-		
+				
 			case COMPRESSION_STATUS_ERROR.rawValue:
 				return nil
 				
